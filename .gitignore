@@ -2,3 +2,4 @@
 .databricks/
 __pycache__
 attic/
+.env
