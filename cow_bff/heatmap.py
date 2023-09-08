@@ -46,6 +46,6 @@ if __name__ == "__main__":
     from databricks.connect import DatabricksSession
     spark = DatabricksSession.builder.getOrCreate()
 
-    cows_bff = spark.read.table("db.cows_bff")
+    cows_bff = spark.read.table("farm.db.cows_bff")
     df = compute_heatmap(cows_bff)
     df.show()
