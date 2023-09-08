@@ -6,18 +6,17 @@ import datetime
 
 @pytest.fixture(scope="session")
 def spark_session():
-    global spark
-    try:
-        spark
-    except NameError:
-        from databricks.connect import DatabricksSession
-        spark = DatabricksSession.builder.getOrCreate()
+    '''Set up connection using Databricks Connect'''
+    from databricks.connect import DatabricksSession
+    spark = DatabricksSession.builder.getOrCreate()
 
     yield spark
 
 
 @pytest.fixture(scope="session")
 def cow_bff(spark_session):
+    '''Mock a dataframe with example values for unit testing'''
+
     schema = StructType([ \
         StructField("cow_name", StringType(),True), \
         StructField("meal_start", IntegerType(),True), \
@@ -39,6 +38,7 @@ def cow_bff(spark_session):
 
 
 def test_calculate_time_overlap():
+    '''Compare our input Dataframe with an expected output Dataframe using pandas'''
     assert calculate_time_overlap(0, 10, 20, 30) == 0
     assert calculate_time_overlap(0, 20, 10, 30) == 10
     assert calculate_time_overlap(0, 20, 5, 15) == 10

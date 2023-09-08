@@ -2,7 +2,7 @@ bundle:
   name: cow_bff
 
 workspace:
-  host: https://adb-1966697730403610.10.azuredatabricks.net/
+  host: https://e2-demo-west.cloud.databricks.com/
 
 resources:
   jobs:
@@ -12,8 +12,11 @@ resources:
         - job_cluster_key: cow_cluster
           new_cluster:
             spark_version: 13.1.x-scala2.12
-            num_workers: 1
-            node_type_id: Standard_DS3_v2
+            policy_id: E05E27B13F0003A0
+            autoscale:
+              min_workers: 1
+              max_workers: 4
+            node_type_id: i3.xlarge
       tasks:
         - task_key: cow_report
           job_cluster_key: cow_cluster
@@ -35,11 +38,3 @@ environments:
       jobs:
         daily_report:
           name: "[${bundle.environment}] Cow BFF report"
-          job_clusters:
-            - job_cluster_key: daily_report
-              new_cluster:
-                spark_version: 13.1.x-scala2.12
-                node_type_id: Standard_DS3_v2
-                autoscale:
-                  max_workers: 10
-                  min_workers: 1

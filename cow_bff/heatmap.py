@@ -2,6 +2,7 @@ from pyspark.sql.functions import udf, countDistinct, sum, col
 from pyspark.sql.types import IntegerType
 from pyspark.sql.dataframe import DataFrame
 
+# Calculates the meal time between two cows
 calculate_time_overlap = lambda start_interval_1, end_interval_1, start_interval_2, end_interval_2: \
     0 if end_interval_1 <= start_interval_2 or end_interval_2 <= start_interval_1 else \
     min(end_interval_1, end_interval_2) - max(start_interval_1, start_interval_2) 
