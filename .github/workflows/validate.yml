@@ -34,12 +34,11 @@ jobs:
 
   deploy:
     name: "Deploy bundle and run notebook"
-    environment: Staging
     runs-on: ubuntu-latest
-    env:
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      DATABRICKS_BUNDLE_ENV: qa
     steps:
       - uses: actions/checkout@v3
       - uses: databricks/setup-cli@main
       - run: databricks bundle deploy -t qa
+        env:
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_BUNDLE_ENV: qa
