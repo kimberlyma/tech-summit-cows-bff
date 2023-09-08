@@ -42,4 +42,4 @@ jobs:
       - uses: databricks/setup-cli@main
       - shell: bash
         name: Deploy to QA environment
-        run: databricks bundle deploy -e qa
+        run: databricks bundle deploy -t qa
