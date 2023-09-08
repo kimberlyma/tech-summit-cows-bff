@@ -12,6 +12,7 @@ resources:
         - job_cluster_key: cow_cluster
           new_cluster:
             spark_version: 13.1.x-scala2.12
+            policy_id: E05E27B13F0003A0
             num_workers: 1
             node_type_id: i3.xlarge
       tasks:
