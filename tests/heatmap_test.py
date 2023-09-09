@@ -1,4 +1,4 @@
-from cow_bff.heatmap import calculate_time_overlap, compute_heatmap
+from cow_bff.heatmap import calculate_time_overlap, compute_heatmap, compute_overlap
 from cow_bff.historical import identify_friend_groups
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DateType, DoubleType, ArrayType, LongType
 from pandas.testing import assert_frame_equal
@@ -73,14 +73,17 @@ def cow_bff(spark_session):
 
 
 def test_calculate_time_overlap():
-    '''Compare our input Dataframe with an expected output Dataframe using pandas'''
     assert calculate_time_overlap(0, 10, 20, 30) == 0
     assert calculate_time_overlap(0, 20, 10, 30) == 10
     assert calculate_time_overlap(0, 20, 5, 15) == 10
 
 
 def test_compute_heatmap(spark_session, cow_bff):
-    result = compute_heatmap(cow_bff)
+    '''Compare our input Dataframe with an expected output Dataframe using pandas'''
+    #dont do this irl
+    overlap = compute_overlap(cow_bff)
+    result = compute_heatmap(overlap)
+
     schema = StructType([ \
         StructField("cow1", StringType(),True), \
         StructField("cow2", StringType(),True), \
