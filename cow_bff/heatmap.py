@@ -9,7 +9,7 @@ calculate_time_overlap = lambda start_interval_1, end_interval_1, start_interval
 
 calculate_time_overlap_udf = udf(calculate_time_overlap, IntegerType())
 
-def compute_heatmap(cows_bff: DataFrame):
+def compute_overlap(cows_bff: DataFrame):
     cow1 = cows_bff\
         .withColumnRenamed('cow_name','cow1')\
         .withColumnRenamed('meal_start','meal_start1')\
@@ -31,8 +31,11 @@ def compute_heatmap(cows_bff: DataFrame):
     df = df\
         .withColumn('overlap', calculate_time_overlap_udf("meal_start1", "meal_end1", "meal_start2", "meal_end2"))\
         .select('cow1','cow2','date1','overlap')
+    
+    return df
 
-    df = df.groupBy('cow1', 'cow2').agg(sum('overlap').alias('total_overlap'), countDistinct('date1').alias('distinct_days'))
+def compute_heatmap(cows_bff: DataFrame):
+    df = cows_bff.groupBy('cow1', 'cow2').agg(sum('overlap').alias('total_overlap'), countDistinct('date1').alias('distinct_days'))
     df = df\
         .withColumn('avg_overlap', df.total_overlap / df.distinct_days)\
         .select('cow1','cow2','avg_overlap')\
