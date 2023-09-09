@@ -1,5 +1,6 @@
 from cow_bff.heatmap import calculate_time_overlap, compute_heatmap
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DateType, DoubleType
+from cow_bff.historical import identify_friend_groups
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DateType, DoubleType, ArrayType, LongType
 from pandas.testing import assert_frame_equal
 import pytest
 import datetime
@@ -12,6 +13,40 @@ def spark_session():
 
     yield spark
 
+@pytest.fixture(scope="session")
+def overlap(spark_session):
+    overlap_schema = StructType([ \
+        StructField("cow1", StringType(),True), \
+        StructField("cow2" ,StringType(),True), \
+        StructField("date1", DateType(),True), \
+        StructField("distance", DoubleType(),True)
+    ])
+    overlap = spark_session.createDataFrame([
+        ("cow1", "cow2",  datetime.date(2000, 1, 1), 3.0),
+        ("cow2", "cow1",  datetime.date(2000, 1, 1), 3.0),
+        ("cow3", "cow1",  datetime.date(2000, 1, 1),  2.0),
+        ("cow1", "cow3",  datetime.date(2000, 1, 1), 2.0),
+        ("cow4", "cow5",  datetime.date(2000, 1, 1), .6), 
+    ], overlap_schema)
+
+    yield overlap    
+
+@pytest.fixture(scope="session")
+def distance(spark_session):
+    distance_schema = StructType([ \
+        StructField("cow1", StringType(),True), \
+        StructField("cow2", StringType(),True), \
+        StructField("distance", DoubleType(),True)
+    ])
+    distance = spark_session.createDataFrame([
+        ("cow1", "cow2", 3.0),
+        ("cow2", "cow1", 3.0),
+        ("cow3", "cow1", 2.0),
+        ("cow1", "cow3", 2.0),
+        ("cow4", "cow5", .6)
+    ], distance_schema)
+
+    yield distance   
 
 @pytest.fixture(scope="session")
 def cow_bff(spark_session):
@@ -59,4 +94,26 @@ def test_compute_heatmap(spark_session, cow_bff):
         ("cow3", "cow1", 0.5),
         ("cow3", "cow2", 2.0),        
     ], schema)
+    assert_frame_equal(result.toPandas(), expected.toPandas())
+
+def test_duplicate_friend_pairs(spark_session, distance, overlap):
+    result = identify_friend_groups(n=3, distance=distance, overlap=overlap)
+    pairs  = result.select("cow1", "cow2").dropDuplicates().toPandas()
+
+    assert pairs[pairs.apply(frozenset, axis=1).duplicated()].empty
+
+def test_friend_pairs(spark_session, distance, overlap):
+    result = identify_friend_groups(n=2, distance=distance, overlap=overlap) \
+        .select("cow1", "cow2").dropDuplicates()
+
+    schema = StructType([ \
+        StructField("cow1", StringType(),True), \
+        StructField("cow2", StringType(),True)
+    ])
+
+    expected = spark_session.createDataFrame([
+        ("cow1", "cow2"),
+        ("cow1", "cow3")    
+    ], schema)
+
     assert_frame_equal(result.toPandas(), expected.toPandas())
