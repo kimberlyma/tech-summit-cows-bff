@@ -35,12 +35,12 @@ jobs:
       #----------------------------------------------
       #              run test suite
       #----------------------------------------------
-      # - name: Run unit tests
-      #   run: pytest -s -v tests/ --disable-warnings
-      # - name: "Prepare branch"
-      #   uses: actions/checkout@v3
-      # - name: "Set up CLI"
-      #   uses: databricks/setup-cli@main
+      - name: Run unit tests
+        run: pytest -s -v tests/ --disable-warnings
+      - name: "Prepare branch"
+        uses: actions/checkout@v3
+      - name: "Set up CLI"
+        uses: databricks/setup-cli@main
       #----------------------------------------------
       #              deploy bundle to Staging
       #----------------------------------------------
