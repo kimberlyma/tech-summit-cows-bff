@@ -44,19 +44,19 @@ def test_calculate_time_overlap():
     assert calculate_time_overlap(0, 20, 5, 15) == 10
 
 
-# def test_compute_heatmap(spark_session, cow_bff):
-#     result = compute_heatmap(cow_bff)
-#     schema = StructType([ \
-#         StructField("cow1", StringType(),True), \
-#         StructField("cow2", StringType(),True), \
-#         StructField("distance", DoubleType(),True)
-#     ])
-#     expected = spark_session.createDataFrame([
-#         ("cow1", "cow2", 0.5),
-#         ("cow1", "cow3", 0.5),
-#         ("cow2", "cow1", 0.5),
-#         ("cow2", "cow3", 2.0),
-#         ("cow3", "cow1", 0.5),
-#         ("cow3", "cow2", 2.0),        
-#     ], schema)
-#     assert_frame_equal(result.toPandas(), expected.toPandas())
+def test_compute_heatmap(spark_session, cow_bff):
+    result = compute_heatmap(cow_bff)
+    schema = StructType([ \
+        StructField("cow1", StringType(),True), \
+        StructField("cow2", StringType(),True), \
+        StructField("distance", DoubleType(),True)
+    ])
+    expected = spark_session.createDataFrame([
+        ("cow1", "cow2", 0.5),
+        ("cow1", "cow3", 0.5),
+        ("cow2", "cow1", 0.5),
+        ("cow2", "cow3", 2.0),
+        ("cow3", "cow1", 0.5),
+        ("cow3", "cow2", 2.0),        
+    ], schema)
+    assert_frame_equal(result.toPandas(), expected.toPandas())
