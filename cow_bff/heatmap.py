@@ -17,7 +17,6 @@ def compute_heatmap(cows_bff: DataFrame):
         .withColumnRenamed('date','date1')\
         .select('cow1','meal_start1','meal_end1','date1')
 
-
     cow2 = cows_bff\
         .withColumnRenamed('cow_name','cow2')\
         .withColumnRenamed('meal_start','meal_start2')\
