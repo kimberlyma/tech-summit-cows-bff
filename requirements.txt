@@ -2,4 +2,4 @@ ipykernel
 pytest
 plotly
 nbformat
-databricks-connect==13.1.0
+databricks-connect==13.3.0
