@@ -1,0 +1,28 @@
+name: Release pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  release-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: "Set up CLI"
+        uses: databricks/setup-cli@main
+      #----------------------------------------------
+      #              deploy bundle to Staging
+      #----------------------------------------------
+      - name: "Deploy bundle"
+        run: databricks bundle deploy
+        env:
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_BUNDLE_ENV: production
