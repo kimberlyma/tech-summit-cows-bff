@@ -5,7 +5,7 @@ from pyspark.sql.dataframe import DataFrame
 # Calculates the meal time between two cows
 calculate_time_overlap = lambda start_interval_1, end_interval_1, start_interval_2, end_interval_2: \
     0 if end_interval_1 <= start_interval_2 or end_interval_2 <= start_interval_1 else \
-    min(end_interval_1, end_interval_2) - max(start_interval_1, start_interval_2) 
+    max(end_interval_1, end_interval_2) - min(start_interval_1, start_interval_2) 
 
 calculate_time_overlap_udf = udf(calculate_time_overlap, IntegerType())
 
@@ -45,6 +45,6 @@ if __name__ == "__main__":
     from databricks.connect import DatabricksSession
     spark = DatabricksSession.builder.getOrCreate()
 
-    cows_bff = spark.read.table("farm.db.cows_bff")
+    cows_bff = spark.read.table("field_demos.db.cows_bff")
     df = compute_heatmap(cows_bff)
     df.show()
