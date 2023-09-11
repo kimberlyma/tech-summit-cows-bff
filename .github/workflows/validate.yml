@@ -53,7 +53,7 @@ jobs:
       #              run integration tests
       #----------------------------------------------
       - name: "Run deployment"
-        run: databricks bundle run
+        run: databricks bundle run daily_report
         env:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_BUNDLE_ENV: qa
