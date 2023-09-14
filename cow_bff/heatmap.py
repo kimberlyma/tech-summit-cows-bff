@@ -26,7 +26,6 @@ def compute_heatmap(cows_bff: DataFrame):
 
     df = cow1.crossJoin(cow2)\
     .where((cow1.cow1 != cow2.cow2) & (cow1.date1 == cow2.date2))
-
     df = df\
         .withColumn('overlap', calculate_time_overlap_udf("meal_start1", "meal_end1", "meal_start2", "meal_end2"))\
         .select('cow1','cow2','date1','overlap')
@@ -45,6 +44,6 @@ if __name__ == "__main__":
     from databricks.connect import DatabricksSession
     spark = DatabricksSession.builder.getOrCreate()
 
-    cows_bff = spark.read.table("farm.db.cows_bff")
+    cows_bff = spark.read.table("field_demos.db.cows_bff")
     df = compute_heatmap(cows_bff)
     df.show()
