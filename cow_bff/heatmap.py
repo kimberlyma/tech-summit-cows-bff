@@ -5,7 +5,7 @@ from pyspark.sql.dataframe import DataFrame
 # Calculates the meal time between two cows
 calculate_time_overlap = lambda start_interval_1, end_interval_1, start_interval_2, end_interval_2: \
     0 if end_interval_1 <= start_interval_2 or end_interval_2 <= start_interval_1 else \
-    max(end_interval_1, end_interval_2) - min(start_interval_1, start_interval_2) 
+    min(end_interval_1, end_interval_2) - max(start_interval_1, start_interval_2) 
 
 calculate_time_overlap_udf = udf(calculate_time_overlap, IntegerType())
 
@@ -26,7 +26,6 @@ def compute_heatmap(cows_bff: DataFrame):
 
     df = cow1.crossJoin(cow2)\
     .where((cow1.cow1 != cow2.cow2) & (cow1.date1 == cow2.date2))
-
     df = df\
         .withColumn('overlap', calculate_time_overlap_udf("meal_start1", "meal_end1", "meal_start2", "meal_end2"))\
         .select('cow1','cow2','date1','overlap')
